@@ -1,6 +1,6 @@
 {
   "id": "/audio-recorder/",
-  "name": "Student MP3 Recorder",
+  "name": "MP3 Recorder",
   "short_name": "Recorder",
   "start_url": "index.html",
   "display": "standalone",
