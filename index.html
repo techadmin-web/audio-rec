@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.3">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+    span.s2 {font: 12.0px 'Apple Color Emoji'; font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Student Voice Recorder&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link rel="manifest" href="manifest.json"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;script src="https://unpkg.com/mic-recorder-to-mp3@2.2.2/dist/index.min.js"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body { font-family: system-ui, sans-serif; text-align: center; padding: 2rem; background: #f0f4f8; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.controls { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>button { padding: 1rem 2rem; font-size: 1.2rem; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#recordBtn { background: #e74c3c; color: white; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#stopBtn { background: #2c3e50; color: white; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#recordBtn:disabled, #stopBtn:disabled { background: #bdc3c7; cursor: not-allowed; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.recording-indicator { color: #e74c3c; font-weight: bold; display: none; margin-top: 10px; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#audioList { margin-top: 2rem; list-style: none; padding: 0; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>audio { margin: 10px 0; display: block; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h1&gt;</span><span class="s2">🎤</span><span class="s1"> Student Recorder&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="recording-indicator" id="status"&gt;● Recording...&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="controls"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button id="recordBtn"&gt;Start Recording&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button id="stopBtn" disabled&gt;Stop&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="audioList"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let mediaRecorder;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let audioChunks = [];</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const recordBtn = document.getElementById('recordBtn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const stopBtn = document.getElementById('stopBtn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const status = document.getElementById('status');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const audioList = document.getElementById('audioList');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>recordBtn.onclick = async () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const stream = await navigator.mediaDevices.getUserMedia({ audio: true });</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mediaRecorder = new MediaRecorder(stream);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mediaRecorder.ondataavailable = (event) =&gt; audioChunks.push(event.data);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mediaRecorder.onstop = () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const audioUrl = URL.createObjectURL(audioBlob);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const audio = document.createElement('audio');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>audio.src = audioUrl;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>audio.controls = true;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// Add a download link for the student</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const link = document.createElement('a');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.href = audioUrl;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.download = `recording_${new Date().getTime()}.webm`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.innerText = "Download Recording";</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const container = document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>container.appendChild(audio);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>container.appendChild(link);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>audioList.prepend(container);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>audioChunks = []; // Reset for next recording</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mediaRecorder.start();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>recordBtn.disabled = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>stopBtn.disabled = false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>status.style.display = 'block';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>stopBtn.onclick = () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mediaRecorder.stop();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>recordBtn.disabled = false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>stopBtn.disabled = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>status.style.display = 'none';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Register Service Worker for PWA</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if ('serviceWorker' in navigator) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>navigator.serviceWorker.register('sw.js');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
